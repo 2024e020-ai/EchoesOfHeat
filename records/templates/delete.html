@@ -1,0 +1,96 @@
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+    /* 共通テーマデザイン */
+    body {
+        background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%) !important;
+        color: #ddd;
+        font-family: 'Noto Serif JP', serif !important;
+        letter-spacing: 0.05em;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* カードデザイン（警告色強め） */
+    .card {
+        background-color: rgba(20, 20, 20, 0.95) !important;
+        border: 1px solid rgba(220, 53, 69, 0.6) !important; /* 枠線を少し強く */
+        box-shadow: 0 0 40px rgba(220, 53, 69, 0.2) !important;
+        max-width: 500px;
+        width: 100%;
+    }
+
+    h2 { text-shadow: 0 0 10px rgba(220, 53, 69, 0.8); }
+
+    /* 削除対象データの表示エリア */
+    .target-data {
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid #333;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-left: 3px solid #dc3545;
+    }
+
+    /* ボタン */
+    .btn-danger {
+        box-shadow: 0 0 15px rgba(220, 53, 69, 0.6);
+        transition: transform 0.2s;
+    }
+    .btn-danger:hover {
+        transform: scale(1.05);
+        background-color: #a00;
+        box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+    }
+</style>
+
+<body>
+    <div class="container py-4">
+        <div class="card mx-auto text-center">
+            <div class="card-body p-5">
+                <div class="mb-4">
+                    <i class="bi bi-exclamation-triangle text-danger display-1" style="text-shadow: 0 0 20px rgba(220,53,69,0.5);"></i>
+                </div>
+
+                <div class="text-danger small fw-bold mb-1" style="letter-spacing: 3px;">
+                    DELETE MEMORY
+                </div>
+                <h2 class="text-danger fw-bold mb-4">
+                    歴史の抹消
+                </h2>
+                
+                <p class="text-secondary mb-4">
+                    本当にこの記録を<span class="text-light fw-bold">虚無へ還して</span>もよいか？<br>
+                    失われた熱は、二度と戻らない。
+                </p>
+
+                <div class="target-data text-start">
+                    <div class="small text-secondary mb-1">削除対象:</div>
+                    <h5 class="text-warning mb-2">{{ object.sauna_name }}</h5>
+                    <div class="small text-light">
+                        <span class="me-2"><i class="bi bi-calendar"></i> {{ object.created_at|date:"Y/m/d H:i" }}</span>
+                        <span><i class="bi bi-bar-chart"></i> Lv.{{ object.apocalypse_score }}</span>
+                    </div>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-3">
+                        <button type="submit" class="btn btn-danger btn-lg fw-bold">
+                            <i class="bi bi-trash3-fill"></i> 抹消する
+                        </button>
+                        
+                        <a href="{% url 'list' %}" class="btn btn-outline-secondary">
+                            思いとどまる
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>

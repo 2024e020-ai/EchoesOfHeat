@@ -1,0 +1,100 @@
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%) !important;
+        color: #ddd;
+        font-family: 'Noto Serif JP', serif;
+    }
+    .detail-card {
+        background-color: rgba(20, 20, 20, 0.9);
+        border: 1px solid rgba(13, 202, 240, 0.3);
+        box-shadow: 0 0 20px rgba(13, 202, 240, 0.15);
+        border-radius: 10px;
+        padding: 2rem;
+    }
+    .stat-box {
+        border: 1px solid #333;
+        padding: 1rem;
+        border-radius: 5px;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.05);
+    }
+    .stat-label { font-size: 0.9rem; color: #888; }
+    .stat-value { font-size: 1.5rem; font-weight: bold; }
+    .score-display {
+        font-size: 3rem;
+        color: #ffc107;
+        text-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="detail-card">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div>
+                        <h6 class="text-info mb-1">{{ record.created_at|date:"Y年m月d日 H:i" }} の記録</h6>
+                        <h1 class="display-5 fw-bold text-white">{{ record.sauna_name }}</h1>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-secondary small">黙示録指数</div>
+                        <div class="score-display">{{ record.apocalypse_score }}</div>
+                    </div>
+                </div>
+
+                <hr class="border-secondary">
+
+                <div class="row g-3 mb-4">
+                    <div class="col-4">
+                        <div class="stat-box">
+                            <i class="bi bi-fire text-danger fs-3 mb-2"></i>
+                            <div class="stat-label">サウナ</div>
+                            <div class="stat-value text-danger">{{ record.sauna_time }} <span class="fs-6">分</span></div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="stat-box">
+                            <i class="bi bi-droplet-fill text-info fs-3 mb-2"></i>
+                            <div class="stat-label">水風呂</div>
+                            <div class="stat-value text-info">{{ record.water_time }} <span class="fs-6">秒</span></div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="stat-box">
+                            <i class="bi bi-wind text-success fs-3 mb-2"></i>
+                            <div class="stat-label">休憩</div>
+                            <div class="stat-value text-success">{{ record.rest_time }} <span class="fs-6">分</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <h5 class="text-secondary mb-3"><i class="bi bi-chat-quote-fill"></i> 魂の独白</h5>
+                    <div class="p-3 bg-dark border border-secondary rounded text-light" style="min-height: 100px;">
+                        {{ record.comment|linebreaksbr|default:"（言葉はない。ただ整いがあるのみ。）" }}
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'list' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> 戻る
+                    </a>
+                    <div>
+                        <a href="{% url 'update' record.pk %}" class="btn btn-outline-warning me-2">
+                            <i class="bi bi-pencil"></i> 修正
+                        </a>
+                        <a href="{% url 'delete' record.pk %}" class="btn btn-outline-danger">
+                            <i class="bi bi-trash"></i> 抹消
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

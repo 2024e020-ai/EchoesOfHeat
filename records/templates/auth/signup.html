@@ -1,0 +1,106 @@
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+    /* 共通テーマ：深淵なる闇 */
+    body {
+        background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%) !important;
+        color: #ddd;
+        font-family: 'Noto Serif JP', serif !important;
+        letter-spacing: 0.05em;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* カードデザイン */
+    .card {
+        background-color: rgba(20, 20, 20, 0.95) !important;
+        border: 1px solid rgba(25, 135, 84, 0.4) !important; /* 登録は緑の光 */
+        box-shadow: 0 0 30px rgba(25, 135, 84, 0.15) !important;
+        max-width: 500px;
+        width: 100%;
+    }
+
+    /* テキスト発光 */
+    h2 { text-shadow: 0 0 10px rgba(25, 135, 84, 0.8); }
+
+    /* 入力フォームの魔改造 */
+    .form-control {
+        background-color: #111 !important;
+        border: 1px solid #444 !important;
+        color: #fff !important;
+        font-family: 'Noto Serif JP', serif;
+    }
+    .form-control:focus {
+        background-color: #000 !important;
+        border-color: #198754 !important;
+        box-shadow: 0 0 15px rgba(25, 135, 84, 0.5) !important;
+        color: #fff !important;
+    }
+    .form-label { color: #aaa; }
+    .form-text { color: #666 !important; font-size: 0.8em; }
+
+    /* ボタン */
+    .btn-success {
+        background-color: #198754;
+        border: none;
+        box-shadow: 0 0 15px rgba(25, 135, 84, 0.6);
+        transition: transform 0.2s;
+    }
+    .btn-success:hover {
+        background-color: #157347;
+        transform: scale(1.02);
+        box-shadow: 0 0 25px rgba(25, 135, 84, 1);
+    }
+
+    /* リンク */
+    a.text-light:hover {
+        color: #fff !important;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    }
+</style>
+
+<body>
+    <div class="container px-4">
+        <div class="card mx-auto">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <div class="text-success small fw-bold" style="letter-spacing: 3px; opacity: 0.7;">
+                        SOUL CONTRACT
+                    </div>
+                    <h2 class="text-success fw-bold mb-3">
+                        魂の契約書
+                    </h2>
+                    <p class="text-secondary small">
+                        新たなる巡礼者よ。<br>汝の名を刻み、蒸気の世界へ足を踏み入れよ。
+                    </p>
+                </div>
+
+                <hr class="border-secondary mb-4">
+
+                <form method="post">
+                    {% csrf_token %}
+                    {% bootstrap_form form %}
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-success py-3 fw-bold">
+                            <i class="bi bi-feather"></i> 契約を締結する (登録)
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4">
+                    <small class="text-secondary">既に契約済みか？</small><br>
+                    <a href="{% url 'login' %}" class="text-light text-decoration-none small mt-2 d-inline-block">
+                        <i class="bi bi-arrow-return-left"></i> 扉の前へ戻る
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

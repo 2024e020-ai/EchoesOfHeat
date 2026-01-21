@@ -1,0 +1,247 @@
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+    /* 1. 全体の背景 */
+    body {
+        background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%) !important;
+        color: #ddd;
+    }
+
+    /* 2. フォント */
+    h1, h2, h3, h4, h5, h6, .modal-title, .alert em, .badge, .btn {
+        font-family: 'Noto Serif JP', serif !important;
+        letter-spacing: 0.05em;
+    }
+    .fw-bold {
+        font-weight: 700 !important;
+    }
+
+    /* 3. 魔力発光エフェクト */
+    .text-danger, h1.text-danger, b.text-danger {
+        text-shadow: 0 0 10px rgba(220, 53, 69, 0.8), 0 0 20px rgba(220, 53, 69, 0.4);
+    }
+    .text-warning, h5.text-warning, em.text-warning {
+        text-shadow: 0 0 8px rgba(255, 193, 7, 0.8), 0 0 15px rgba(255, 193, 7, 0.3);
+    }
+    .text-info, b.text-info, .modal-title.text-info {
+        text-shadow: 0 0 8px rgba(13, 202, 240, 0.8);
+    }
+    .text-success {
+        text-shadow: 0 0 8px rgba(25, 135, 84, 0.8);
+    }
+
+    /* 4. コンポーネント */
+    .card, .modal-content, .alert, .form-control {
+        background-color: rgba(20, 20, 20, 0.9) !important;
+        border: 1px solid rgba(220, 53, 69, 0.3) !important;
+        box-shadow: 0 0 15px rgba(220, 53, 69, 0.1) !important;
+    }
+
+    /* 5. ボタン */
+    .btn-danger {
+        box-shadow: 0 0 15px rgba(220, 53, 69, 0.6);
+        transition: all 0.3s ease;
+    }
+    .btn-danger:hover {
+        transform: scale(1.01);
+        box-shadow: 0 0 25px rgba(220, 53, 69, 1);
+    }
+    
+    canvas {
+        filter: drop-shadow(0 0 5px rgba(220, 53, 69, 0.5));
+    }
+    
+    a.text-warning:hover {
+        color: #ffca2c !important;
+        text-shadow: 0 0 20px rgba(255, 193, 7, 1);
+    }
+</style>
+<body>
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <div class="text-danger small fw-bold" style="letter-spacing: 3px; opacity: 0.7; margin-bottom: -5px;">
+                Echoes of Heat
+            </div>
+            <h1 class="text-danger m-0">
+                蒸熱残響
+                <small class="text-secondary ms-3 fs-5" style="font-weight: normal;">
+                    ― 整い後の黙示録 ―
+                </small>
+            </h1>
+        </div>
+        
+        <div class="text-end">
+            <div class="mb-2">
+                <span class="text-secondary small me-2">通算 <b class="text-light">{{ total_count }}</b> 回</span>
+                <span class="badge bg-warning text-dark">{{ user_rank }}</span>
+            </div>
+            <div>
+                <button type="button" class="btn btn-outline-info btn-sm me-2" data-bs-toggle="modal" data-bs-target="#helpModal">
+                    <i class="bi bi-question-circle"></i> HELP
+                </button>
+                <span class="me-3 fw-bold">{{ user.username }}</span>
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">退散</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-dark border-secondary text-center text-light mb-4 py-3" role="alert">
+        <small class="text-secondary d-block mb-1" style="letter-spacing: 2px;">― 本日の啓示 ―</small>
+        <em class="fs-5 text-warning" style="font-family: serif;">"{{ random_quote }}"</em>
+    </div>
+    
+    {% if graph_scores %}
+    <div class="card bg-dark border-secondary mb-4 shadow-sm">
+        <div class="card-body">
+            <h6 class="text-danger border-bottom border-secondary pb-2 mb-3">
+                <i class="bi bi-graph-up"></i> 整いの軌跡 (Apocalypse Trajectory)
+            </h6>
+            <canvas id="saunaChart" style="max-height: 250px;"></canvas>
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="query" class="form-control bg-dark text-light border-secondary" 
+                   placeholder="施設名で過去の儀式を検索..." value="{{ search_query }}">
+            <button class="btn btn-outline-danger" type="submit">検索</button>
+        </div>
+    </form>
+
+    <div class="mb-4">
+        <a href="{% url 'create' %}" class="btn btn-danger w-100 py-3 fw-bold fs-5">＋ 新たな儀式を刻む</a>
+    </div>
+
+    {% for rec in records %}
+    <div class="card mb-3 bg-dark border-secondary text-light">
+        <div class="card-body">
+            <h5 class="card-title text-warning">
+                <a href="{% url 'detail' rec.pk %}" class="text-warning text-decoration-none">
+                    {{ rec.sauna_name }}
+                </a>
+                <span class="badge bg-danger ms-2" style="box-shadow: 0 0 10px rgba(220,53,69,0.8);">
+                    Lv. {{ rec.apocalypse_score }}
+                </span>
+            </h5>
+
+            <div class="row text-center my-4 py-2 mx-1 rounded" style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);">
+                <div class="col-4 border-end border-secondary">
+                    <div class="text-danger small opacity-75 mb-1"><i class="bi bi-fire"></i> サウナ</div>
+                    <div class="text-danger fw-bold" style="font-size: 2.2rem; line-height: 1;">{{ rec.sauna_time }}</div>
+                    <div class="text-secondary" style="font-size: 0.7rem;">MINUTES</div>
+                </div>
+
+                <div class="col-4 border-end border-secondary">
+                    <div class="text-info small opacity-75 mb-1"><i class="bi bi-droplet-fill"></i> 水風呂</div>
+                    <div class="text-info fw-bold" style="font-size: 2.2rem; line-height: 1;">{{ rec.water_time }}</div>
+                    <div class="text-secondary" style="font-size: 0.7rem;">SECONDS</div>
+                </div>
+
+                <div class="col-4">
+                    <div class="text-success small opacity-75 mb-1"><i class="bi bi-wind"></i> 外気浴</div>
+                    <div class="text-success fw-bold" style="font-size: 2.2rem; line-height: 1;">{{ rec.rest_time }}</div>
+                    <div class="text-secondary" style="font-size: 0.7rem;">MINUTES</div>
+                </div>
+            </div>
+
+            <div class="mt-3 p-3 rounded" style="background: rgba(255, 255, 255, 0.05);">
+                <p class="mb-0" style="font-size: 1rem; line-height: 1.6; color: #ddd;">
+                    {{ rec.comment|linebreaksbr|truncatechars:80 }} <small class="text-secondary">(...詳細へ)</small>
+                </p>
+            </div>
+            
+            <div class="text-end mt-3">
+                <small class="me-3 text-secondary">{{ rec.created_at|date:"Y/m/d H:i" }}</small>
+                <a href="{% url 'update' rec.pk %}" class="text-warning me-3" style="text-decoration:none;"><i class="bi bi-pencil"></i> 改竄</a>
+                <a href="{% url 'delete' rec.pk %}" class="text-danger" style="text-decoration:none;">削除</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-center text-muted">一致する記録はありません...</p>
+    {% endfor %}
+</div>
+
+<div class="modal fade" id="helpModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-light border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-info"><i class="bi bi-journal-text"></i> 黙示録の秘術</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6 class="text-warning border-bottom border-secondary pb-1 mb-2">1. 儀式の刻み方</h6>
+                <p class="small text-muted">「新たな儀式」からサウナ・水風呂・外気浴を記録せよ。</p>
+                <h6 class="text-warning border-bottom border-secondary pb-1 mb-2 mt-3">2. 歴史の改竄</h6>
+                <p class="small text-muted">誤って記録した場合、リストの「改竄」ボタンから修正が可能だ。</p>
+                <h6 class="text-warning border-bottom border-secondary pb-1 mb-2 mt-3">3. 魂の階級</h6>
+                <p class="small text-muted mb-2">通算記録回数により、汝の二つ名は進化する。</p>
+                <ul class="list-unstyled small text-muted ps-2">
+                    <li><span class="text-secondary fw-bold">Rank I : 灰の旅人</span> (~10回)</li>
+                    <li><span class="text-light fw-bold">Rank II : 執行者</span> (11~50回)</li>
+                    <li><span class="text-danger fw-bold">Rank III : 絶対神</span> (51回~)</li>
+                </ul>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">理解した</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    {% if graph_scores %}
+    const ctx = document.getElementById('saunaChart').getContext('2d');
+    const saunaChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ graph_dates|safe }},
+            datasets: [{
+                label: '黙示録指数 (整い度)',
+                data: {{ graph_scores|safe }},
+                borderColor: '#dc3545',
+                backgroundColor: 'rgba(220, 53, 69, 0.2)',
+                borderWidth: 2,
+                pointBackgroundColor: '#fff',
+                pointBorderColor: '#dc3545',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#333' },
+                    ticks: { color: '#aaa', font: { family: "'Noto Serif JP', serif" } }
+                },
+                x: {
+                    grid: { color: '#333' },
+                    ticks: { color: '#aaa', font: { family: "'Noto Serif JP', serif" } }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: { color: '#ddd', font: { family: "'Noto Serif JP', serif" } }
+                }
+            }
+        }
+    });
+    {% endif %}
+</script>
+</body>

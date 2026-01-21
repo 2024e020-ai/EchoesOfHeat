@@ -1,0 +1,106 @@
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+    /* 共通の魔界デザイン */
+    body {
+        background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%) !important;
+        color: #ddd;
+        font-family: 'Noto Serif JP', serif;
+    }
+    
+    /* 月ごとのカード */
+    .month-section {
+        background-color: rgba(20, 20, 20, 0.9);
+        border: 1px solid rgba(13, 202, 240, 0.3); /* カレンダーは青白く光らせる */
+        box-shadow: 0 0 15px rgba(13, 202, 240, 0.1);
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        border-radius: 5px;
+    }
+
+    /* 月の見出し */
+    .month-title {
+        color: #0dcaf0; /* 水風呂カラー */
+        text-shadow: 0 0 10px rgba(13, 202, 240, 0.6);
+        border-bottom: 1px solid rgba(13, 202, 240, 0.3);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    /* テーブル */
+    .table {
+        color: #ccc;
+    }
+    .table-hover tbody tr:hover {
+        color: #fff;
+        background-color: rgba(13, 202, 240, 0.1); /* ホバー時に青白く */
+    }
+    .table th {
+        border-color: rgba(255,255,255,0.1);
+        color: #888;
+        font-weight: normal;
+    }
+    .table td {
+        border-color: rgba(255,255,255,0.1);
+        vertical-align: middle;
+    }
+</style>
+
+<body>
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h1 class="text-info">
+            <i class="bi bi-calendar3"></i> 整いの暦
+            <small class="fs-6 text-secondary ms-2">― 歴史の記録 ―</small>
+        </h1>
+        <a href="{% url 'list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-return-left"></i> 現代に戻る
+        </a>
+    </div>
+
+    {% if monthly_records %}
+        {% for month, records in monthly_records.items %}
+            <div class="month-section">
+                <h3 class="month-title">{{ month }}</h3>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width: 15%">日付</th>
+                            <th scope="col">施設名</th>
+                            <th scope="col" class="text-center">黙示録指数</th>
+                            <th scope="col" class="text-end">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rec in records %}
+                        <tr>
+                            <td>{{ rec.created_at|date:"d日 (D)" }}</td>
+                            <td class="fw-bold text-warning">
+                                <a href="{% url 'detail' rec.pk %}" class="text-warning text-decoration-none">
+                                    {{ rec.sauna_name }}
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-danger">{{ rec.apocalypse_score }}</span>
+                            </td>
+                            <td class="text-end">
+                                <a href="{% url 'detail' rec.pk %}" class="btn btn-sm btn-outline-info">詳細</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-dark text-center py-5 border-secondary">
+            <p class="fs-5 text-muted">まだ歴史は刻まれていない...</p>
+            <a href="{% url 'create' %}" class="btn btn-danger mt-3">最初の儀式を行う</a>
+        </div>
+    {% endif %}
+</div>
+</body>

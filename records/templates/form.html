@@ -1,0 +1,116 @@
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+    /* 共通テーマデザイン（リスト画面と同期） */
+    body {
+        background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%) !important;
+        color: #ddd;
+        font-family: 'Noto Serif JP', serif !important;
+        letter-spacing: 0.05em;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* カードデザイン（魔導書の雰囲気） */
+    .card {
+        background-color: rgba(20, 20, 20, 0.95) !important;
+        border: 1px solid rgba(220, 53, 69, 0.4) !important;
+        box-shadow: 0 0 30px rgba(220, 53, 69, 0.15) !important;
+        max-width: 600px;
+        width: 100%;
+    }
+
+    /* タイトル発光 */
+    h2, h4 {
+        text-shadow: 0 0 10px rgba(220, 53, 69, 0.8);
+    }
+
+    /* フォーム入力欄の魔改造 */
+    .form-control, .form-select, textarea {
+        background-color: #111 !important;
+        border: 1px solid #444 !important;
+        color: #fff !important;
+        font-family: 'Noto Serif JP', serif;
+    }
+    .form-control:focus, .form-select:focus, textarea:focus {
+        background-color: #000 !important;
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 15px rgba(220, 53, 69, 0.5) !important;
+        color: #fff !important;
+    }
+    /* ラベルの色 */
+    .form-label {
+        color: #aaa;
+        font-size: 0.9rem;
+    }
+
+    /* ボタン */
+    .btn-danger {
+        box-shadow: 0 0 15px rgba(220, 53, 69, 0.6);
+        transition: transform 0.2s;
+    }
+    .btn-danger:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 25px rgba(220, 53, 69, 1);
+    }
+    .btn-outline-secondary {
+        border-color: #444;
+        color: #888;
+    }
+    .btn-outline-secondary:hover {
+        background-color: #333;
+        color: #ddd;
+    }
+</style>
+
+<body>
+    <div class="container py-4">
+        <div class="card mx-auto">
+            <div class="card-body p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="text-danger small fw-bold" style="letter-spacing: 3px; opacity: 0.7;">
+                        {% if object %}REWRITE HISTORY{% else %}NEW RITUAL{% endif %}
+                    </div>
+                    <h2 class="text-danger fw-bold mb-3">
+                        {% if object %}歴史の改竄{% else %}新たな儀式の刻印{% endif %}
+                    </h2>
+                    <p class="text-secondary small">
+                        {% if object %}
+                        過去の記憶を書き換える禁断の術式。
+                        {% else %}
+                        熱と冷気の狭間で見た光景を記録せよ。
+                        {% endif %}
+                    </p>
+                </div>
+
+                <hr class="border-secondary mb-4">
+
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% bootstrap_form form %}
+
+                    <div class="d-grid gap-2 mt-5">
+                        <button type="submit" class="btn btn-danger py-3 fw-bold fs-5">
+                            {% if object %}
+                                <i class="bi bi-pencil-square"></i> 改竄を実行する
+                            {% else %}
+                                <i class="bi bi-fire"></i> 儀式を完了する
+                            {% endif %}
+                        </button>
+                        
+                        <a href="{% url 'list' %}" class="btn btn-outline-secondary py-2 mt-2">
+                            もどる
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
