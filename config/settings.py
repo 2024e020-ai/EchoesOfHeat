@@ -18,9 +18,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")  # ←.envから取得
 # --- 【修正】本番環境ではFalseに設定（教員提出用） ---
 DEBUG = os.getenv("DEBUG") == "True"  # ←.envから取得してTrue/Falseに変換
 
-# --- 【修正】全ての接続を許可（Render等で動かすため） ---
-ALLOWED_HOSTS = ["*"]
-
+# --- 【修正】本番用 ALLOWED_HOSTS ---
+ALLOWED_HOSTS = ['example.com', 'www.example.com', 'localhost', '127.0.0.1']
 
 # Application definition
 INSTALLED_APPS = [
@@ -36,8 +35,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    # --- 【重要】本番でCSSを正しく表示するためのミドルウェアを追加 ---
-    "whitenoise.middleware.WhiteNoiseMiddleware", 
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # 本番でCSSを正しく表示
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -65,7 +63,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-
 # Database
 DATABASES = {
     "default": {
@@ -73,7 +70,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -83,21 +79,16 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-
 # Internationalization
 LANGUAGE_CODE = "ja"
 TIME_ZONE = "Asia/Tokyo"
 USE_I18N = True
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "static/"
-# --- 【重要】本番環境で静的ファイルを収集する設定 ---
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-# WhiteNoiseが効率的に静的ファイルを配信するための設定
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # 本番環境で静的ファイルを収集
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
