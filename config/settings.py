@@ -13,10 +13,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")  # ←.envから取得
+SECRET_KEY = os.getenv("SECRET_KEY", "dummy-secret-key-for-now")  # ←.envから取得
 
 # --- 【修正】本番環境ではFalseに設定（教員提出用） ---
-DEBUG = os.getenv("DEBUG") == "True"  # ←.envから取得してTrue/Falseに変換
+DEBUG = os.getenv("DEBUG", "False") == "True"  # ←.envから取得してTrue/Falseに変換
 
 # --- 【修正】本番用 ALLOWED_HOSTS ---
 ALLOWED_HOSTS = ['*']
