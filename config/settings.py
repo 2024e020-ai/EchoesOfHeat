@@ -20,6 +20,9 @@ DEBUG = os.getenv("DEBUG", "False") == "True"  # ←.envから取得してTrue/F
 
 # --- 【修正】本番用 ALLOWED_HOSTS ---
 ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = [
+    'https://echoesofheat7.onrender.com',
+]
 
 # Application definition
 INSTALLED_APPS = [
