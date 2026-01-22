@@ -19,7 +19,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")  # ←.envから取得
 DEBUG = os.getenv("DEBUG") == "True"  # ←.envから取得してTrue/Falseに変換
 
 # --- 【修正】本番用 ALLOWED_HOSTS ---
-ALLOWED_HOSTS = ['echoesofheat7.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
